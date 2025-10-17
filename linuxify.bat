@@ -1,7 +1,7 @@
 @echo off
 chcp 1251 > nul
-
-title Linuxify
+set VERSION=0.6
+title Linuxify %VERSION%
 
 
 rem Ask for admin bc we need to copy files into System32 folder
@@ -38,6 +38,7 @@ set IsAllInstalled=false
 if exist "%ClearCommand%" if exist "%CatCommand%" if exist "%TouchCommand%" if exist "%HTOPCommand%" if exist "%NANOCommand%" (
 	set IsAllInstalled=true
 )
+echo  Linux Commands On Windows [%VERSION%] (github.com/0mnr0/Linux-Commands-On-Windows)
 echo  Action list:
 echo.
 echo.
