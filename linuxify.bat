@@ -31,8 +31,6 @@ set "HTOPCommand=%SystemRoot%\System32\htop.exe"
 set "NANOCommand=%SystemRoot%\System32\nano.exe"
 
 
-	
-
 :m1
 cls
 set choice=""
@@ -115,6 +113,19 @@ goto m1
 :setupnano
 	rem I am sorry that i've just put an .exe file in a repo, but I have not yet made 7Zip support to decompress zip files without additional programs, as I strive for compatibility.
 	rem You can check hashes here if you dont trust me: https://github.com/okibcn/nano-for-windows/releases/download/v7.2-22.1/nano-for-windows_win32_v7.2-22.1.zip
+	
+	if not exist "tools/nano.exe" (
+		echo nano.exe is not found, did you delete it? Let me download the file again, ok?
+		timeout /t 5
+		echo.
+		set "nanourl=https://github.com/0mnr0/Linux-Commands-On-Windows/raw/refs/heads/main/tools/nano.exe"
+		powershell -Command "Invoke-WebRequest '%nanourl%' -OutFile 'nano.exe'"
+		copy nano.exe tools
+		del /q nano.exe
+		timeout /t 1 > nul
+		cls
+	)
+	
 	if exist "%NANOCommand%" (
 		del /q "%NANOCommand%"
 		echo Nano command was removed!
