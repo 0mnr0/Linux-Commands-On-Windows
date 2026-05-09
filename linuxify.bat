@@ -1,6 +1,6 @@
 @echo off
 chcp 1251 > nul
-set VERSION=0.6
+set VERSION=0.7
 title Linuxify %VERSION%
 
 
@@ -29,6 +29,17 @@ set "CatCommand=%SystemRoot%\System32\cat.bat"
 set "TouchCommand=%SystemRoot%\System32\touch.bat"
 set "HTOPCommand=%SystemRoot%\System32\htop.exe"
 set "NANOCommand=%SystemRoot%\System32\nano.exe"
+
+for /f "tokens=3" %%A in ('reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "ShowSuperHidden" ^| find "ShowSuperHidden"') do (
+    echo Current value: %%A
+
+    if "%%A"=="0x1" (
+        set SUPERHIDDEN=1
+    ) else (
+        set SUPERHIDDEN=0
+    )
+)
+
 
 
 :m1
@@ -74,6 +85,14 @@ if exist "%NANOCommand%" (
 ) else (
 	echo  %RED% [5] nano %END% - Install the command
 )
+echo.
+echo -- ALSO --
+if "%SUPERHIDDEN%"=="1" (
+	echo  %GREEN% [S] SupperHidden %END% - Do not show "Supper Hidden" files
+) else (
+	echo  %RED% [S] SupperHidden %END% - Show "Supper Hidden" files
+)
+echo.
 echo   exit - To exit :)
 
 
@@ -88,6 +107,8 @@ if "%choice%"=="2" (goto setcatcommand)
 if "%choice%"=="3" (goto setuptouch)
 if "%choice%"=="4" (goto setuphtop)
 if "%choice%"=="5" (goto setupnano)
+if "%choice%"=="s" (goto setuphidden)
+if "%choice%"=="S" (goto setuphidden)
 if "%choice%"=="exit" (exit)
 if "%choice%"=="e" (exit)
 echo.
@@ -169,6 +190,32 @@ if exist %ClearCommand% (
 	echo.
 	echo Program "clear" was created in "%ClearCommand%"
 	echo You can use clear command in any console now!
+	echo.
+	pause
+	goto m1
+)	
+
+
+
+:setuphidden
+if "%SUPERHIDDEN%"=="1" (
+	reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "ShowSuperHidden" /t REG_DWORD /d 0 /f
+	
+	set SUPERHIDDEN=0
+	echo Super Hidden files is no longer visible
+	echo.
+	pause
+	goto m1
+	
+) else (
+	set SUPERHIDDEN=1
+	reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" ^
+	 /v "ShowSuperHidden" ^
+	 /t REG_DWORD ^
+	 /d 1 ^
+	 /f
+	echo.
+	echo Super Hidden files is now visible
 	echo.
 	pause
 	goto m1
